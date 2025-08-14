@@ -1,0 +1,13 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body, html, #app {
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+/* Element Plus 会自动处理样式，这里保留为空或添加自定义全局样式 */
