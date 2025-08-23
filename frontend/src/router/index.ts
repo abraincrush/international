@@ -14,7 +14,8 @@ const router = createRouter({
         { path: 'international', name: 'international', component: () => import('../views/InternationalResources.vue') },
         { path: 'personal', name: 'personal', component: () => import('../views/PersonalPath.vue') },
         { path: 'community', name: 'community', component: () => import('../views/OpenCommunity.vue') },
-        { path: 'atlas', name: 'atlas', component: () => import('../views/Atlas.vue') }
+        { path: 'atlas', name: 'atlas', component: () => import('../views/Atlas.vue') },
+        { path: 'profile', name: 'profile', component: () => import('../views/PersonalProfile.vue') }
       ]
     }
   ]
