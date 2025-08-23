@@ -35,7 +35,7 @@ const route = useRoute()
       </div>
       
       <div class="sidebar-bottom">
-        <div class="sidebar-bottom-item" @click="router.push('/personal')">
+        <div class="sidebar-bottom-item" :class="{ active: route.path === '/profile' }" @click="router.push('/profile')">
           <Icon icon="mdi:account-circle-outline" width="28" />
           <span>个人资料</span>
         </div>
@@ -263,10 +263,39 @@ const route = useRoute()
   font-size: 14px;
   color: #444;
   margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+  border-radius: 10px;
+  background: transparent;
+  position: relative;
+  transition: all 0.2s ease;
 }
 .sidebar-bottom-item .iconify {
   font-size: 28px;
   margin-bottom: 6px;
+}
+
+.sidebar-bottom-item:hover {
+  background: #f7faff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-bottom-item.active {
+  background: #eef5ff;
+  font-weight: 600;
+  color: #222;
+}
+
+.sidebar-bottom-item.active::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 12px;
+  bottom: 12px;
+  width: 3px;
+  background: linear-gradient(180deg, #5b8def, #7b5be6);
+  border-radius: 3px;
 }
 .sidebar-item {
   display: flex;
@@ -281,9 +310,13 @@ const route = useRoute()
   margin-bottom: 8px;
   background: transparent;
   position: relative;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
-.sidebar-item:hover { background: #f7faff; }
+.sidebar-item:hover { 
+  background: #f7faff; 
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
 .sidebar-item.active {
   background: #eef5ff;
   font-weight: 600;
