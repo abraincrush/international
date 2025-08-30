@@ -254,21 +254,24 @@ const route = useRoute()
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin-top: auto;
   margin-bottom: 18px;
 }
 .sidebar-bottom-item {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px 0 10px 0;
+  cursor: pointer;
   font-size: 14px;
   color: #444;
-  margin-top: 8px;
-  cursor: pointer;
   width: 100%;
   border-radius: 10px;
+  margin-bottom: 8px;
   background: transparent;
   position: relative;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 .sidebar-bottom-item .iconify {
   font-size: 28px;
@@ -277,13 +280,10 @@ const route = useRoute()
 
 .sidebar-bottom-item:hover {
   background: #f7faff;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-bottom-item.active {
   background: #eef5ff;
-  font-weight: 600;
   color: #222;
 }
 
@@ -311,15 +311,13 @@ const route = useRoute()
   background: transparent;
   position: relative;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 .sidebar-item:hover { 
   background: #f7faff; 
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 .sidebar-item.active {
   background: #eef5ff;
-  font-weight: 600;
   color: #222;
 }
 .sidebar-item.active::before {
@@ -889,7 +887,7 @@ const route = useRoute()
   flex-shrink: 0;
 }
 .popular-title {
-  font-size: 1em;
+  fontX-size: 1em;
   font-weight: 600;
   color: #222;
   margin-bottom: 0;

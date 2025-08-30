@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { ElInput } from 'element-plus'
 import { Search, Plus, Compass } from '@element-plus/icons-vue'
 import { Icon } from '@iconify/vue'
@@ -12,8 +12,8 @@ interface Agent {
   category: string
 }
 
-// 从原来的assistantOptions迁移过来的数据
-const agents = ref<Agent[]>([
+// 我的智能体（自有）
+const myAgents = ref<Agent[]>([
   {
     id: 'startup-coach',
     name: '创业助手',
@@ -44,23 +44,48 @@ const agents = ref<Agent[]>([
   }
 ])
 
+// 引入的别人的智能体（示例数据）
+const importedAgents = ref<Agent[]>([
+  {
+    id: 'photo-style-ai',
+    name: '写真风格滤镜',
+    icon: 'mdi:camera-iris',
+    description: '一键生成不同风格写真效果',
+    category: '图像'
+  },
+  {
+    id: 'prompt-polisher',
+    name: '提示词润色器',
+    icon: 'mdi:feather',
+    description: '改写并提升提示词质量',
+    category: '写作'
+  }
+])
+
 const searchQuery = ref('')
 const selectedAgentId = ref('')
 
-const filteredAgents = computed(() => {
-  if (!searchQuery.value) return agents.value
-  return agents.value.filter(agent => 
-    agent.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    agent.description.toLowerCase().includes(searchQuery.value.toLowerCase())
+const allAgents = computed(() => [...myAgents.value, ...importedAgents.value])
+
+function filterAgents(list: Agent[]) {
+  if (!searchQuery.value) return list
+  const q = searchQuery.value.toLowerCase()
+  return list.filter(agent =>
+    agent.name.toLowerCase().includes(q) ||
+    agent.description.toLowerCase().includes(q)
   )
-})
+}
+
+const filteredMyAgents = computed(() => filterAgents(myAgents.value))
+const filteredAllAgents = computed(() => filterAgents(allAgents.value))
 
 const emit = defineEmits<{
   viewChange: [view: 'explore' | 'create' | 'chat', agentId?: string]
 }>()
 
-defineProps<{
+const props = defineProps<{
   selectedAgentId?: string
+  currentView?: 'explore' | 'create' | 'chat'
 }>()
 
 function handleExploreClick() {
@@ -73,78 +98,154 @@ function handleCreateClick() {
 
 function handleAgentClick(agentId: string) {
   selectedAgentId.value = agentId
-  emit('viewChange', 'chat', agentId)
+  if (props.currentView === 'create') emit('viewChange', 'create', agentId)
+  else emit('viewChange', 'chat', agentId)
 }
+
+// 同步父组件传入的选中状态，避免按钮状态不一致
+watch(() => props.selectedAgentId, (val) => {
+  if (val !== undefined) selectedAgentId.value = val
+}, { immediate: true })
 </script>
 
 <template>
   <aside class="sidebar">
-    <!-- 搜索栏 -->
-    <div class="search-section">
-      <ElInput
-        v-model="searchQuery"
-        placeholder="在当前列表里搜索"
-        :prefix-icon="Search"
-        clearable
-        class="custom-search"
-      />
-    </div>
-
-    <!-- 导航链接 -->
-    <div class="navigation-section">
-      <div class="nav-item explore-item" @click="handleExploreClick">
-        <div class="nav-icon">
-          <Icon icon="mdi:compass" />
-        </div>
-        <div class="nav-content">
-          <div class="nav-title">探索</div>
-          <div class="nav-subtitle">找到更多智能体</div>
-        </div>
-        <div class="nav-arrow">
-          <Icon icon="mdi:chevron-right" />
-        </div>
+    <!-- 非创作模式：原探索/创建入口 + 搜索 + 我的智能体列表 -->
+    <template v-if="props.currentView !== 'create'">
+      <!-- 搜索栏 -->
+      <div class="search-section">
+        <ElInput
+          v-model="searchQuery"
+          placeholder="在当前列表里搜索"
+          :prefix-icon="Search"
+          clearable
+          class="custom-search"
+        />
       </div>
-      <div class="nav-item create-item" @click="handleCreateClick">
-        <div class="nav-icon">
-          <Icon icon="mdi:plus" />
-        </div>
-        <div class="nav-content">
-          <div class="nav-title">创建自己的智能体</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- 分割线 -->
-    <div class="divider"></div>
-
-    <!-- 智能体列表 -->
-    <div class="agents-section">
-      <div class="section-title">我的智能体</div>
-      <div class="agents-list">
-        <div
-          v-for="agent in filteredAgents"
-          :key="agent.id"
-          class="agent-item"
-          :class="{ active: selectedAgentId === agent.id }"
-          @click="handleAgentClick(agent.id)"
-        >
-          <div class="agent-avatar">
-            <Icon :icon="agent.icon" />
+      <!-- 导航链接 -->
+      <div class="navigation-section">
+        <div class="nav-item explore-item" @click="handleExploreClick">
+          <div class="nav-icon">
+            <Icon icon="mdi:compass" />
           </div>
-          <div class="agent-info">
-            <div class="agent-name">{{ agent.name }}</div>
-            <div class="agent-description">{{ agent.description }}</div>
+          <div class="nav-content">
+            <div class="nav-title">探索</div>
+            <div class="nav-subtitle">找到更多智能体</div>
+          </div>
+          <div class="nav-arrow">
+            <Icon icon="mdi:chevron-right" />
+          </div>
+        </div>
+        <div class="nav-item create-item" @click="handleCreateClick">
+          <div class="nav-icon">
+            <Icon icon="mdi:plus" />
+          </div>
+          <div class="nav-content">
+            <div class="nav-title">创建自己的智能体</div>
+          </div>
+          <div class="nav-arrow">
+            <Icon icon="mdi:chevron-right" />
           </div>
         </div>
       </div>
-    </div>
+
+      <div class="divider"></div>
+
+      <!-- 智能体列表（探索/未进入创作）：合并“我的+引入的”列表 -->
+      <div class="agents-section">
+        <div class="section-title">智能体列表</div>
+        <div class="agents-list">
+          <div
+            v-for="agent in filteredAllAgents"
+            :key="agent.id"
+            class="agent-item"
+            :class="{ active: selectedAgentId === agent.id }"
+            @click="handleAgentClick(agent.id)"
+          >
+            <div class="agent-avatar">
+              <Icon :icon="agent.icon" />
+            </div>
+            <div class="agent-info">
+              <div class="agent-name">{{ agent.name }}</div>
+              <div class="agent-description">{{ agent.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <!-- 创作模式：创作标题 + 搜索 + 组件广场按钮 + 我的智能体 + 组件列表 -->
+    <template v-else>
+      <div class="create-header">创作</div>
+
+      <div class="search-section">
+        <ElInput
+          v-model="searchQuery"
+          placeholder="在当前列表里搜索"
+          :prefix-icon="Search"
+          clearable
+          class="custom-search"
+        />
+      </div>
+
+      <div class="navigation-section">
+        <div class="nav-item explore-item" @click="handleExploreClick">
+          <div class="nav-icon">
+            <Icon icon="mdi:view-grid-plus-outline" />
+          </div>
+          <div class="nav-content">
+            <div class="nav-title">组件广场</div>
+            <div class="nav-subtitle">发现/添加常用组件</div>
+          </div>
+          <div class="nav-arrow">
+            <Icon icon="mdi:chevron-right" />
+          </div>
+        </div>
+        <div class="create-action-row">
+          <button class="create-agent-btn" :class="{ active: props.currentView === 'create' && !selectedAgentId }" @click="handleCreateClick">
+            <span class="plus">+</span>
+            <span>创建智能体</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">我的智能体</div>
+        <div class="dashed-divider"></div>
+        <div class="empty-tip" v-if="filteredMyAgents.length === 0">暂无我的智能体</div>
+        <div class="agents-list" v-else>
+          <div
+            v-for="agent in filteredMyAgents"
+            :key="agent.id"
+            class="agent-item"
+            :class="{ active: selectedAgentId === agent.id }"
+            @click="handleAgentClick(agent.id)"
+          >
+            <div class="agent-avatar">
+              <Icon :icon="agent.icon" />
+            </div>
+            <div class="agent-info">
+              <div class="agent-name">{{ agent.name }}</div>
+              <div class="agent-description">{{ agent.description }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-block">
+        <div class="section-title">组件</div>
+        <div class="dashed-divider"></div>
+        <div class="empty-tip">暂无添加组件</div>
+      </div>
+    </template>
   </aside>
 </template>
 
 <style scoped>
 .sidebar {
   width: 280px;
-  background: transparent;
+  background: white;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -257,6 +358,13 @@ function handleAgentClick(agentId: string) {
   flex-shrink: 0;
 }
 
+.dashed-divider {
+  height: 0.5px;
+  background: transparent;
+  border-top: 0.5px dashed #e5e7eb;
+  margin: 6px 0 10px 0;
+}
+
 .agents-section {
   flex: 1;
   overflow: hidden;
@@ -350,4 +458,20 @@ function handleAgentClick(agentId: string) {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.create-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1d1d1f;
+}
+
+.section-block { margin-top: 8px; }
+.empty-tip { color: #b0b3b8; font-size: 12px; }
+
+/* 创建智能体按钮样式 */
+.create-action-row { padding: 4px 0 0 0; }
+.create-agent-btn { width: 100%; border: none; background: #6c2cf0; color: #fff; border-radius: 999px; height: 40px; cursor: pointer; transition: none; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.create-agent-btn:hover { box-shadow: none; }
+.create-agent-btn.active { background: #ede9fe; color: #fff; }
+.create-agent-btn .plus { font-weight: 700; font-size: 16px; margin-right: 2px; }
 </style>

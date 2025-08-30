@@ -23,6 +23,7 @@ function handleViewChange(view: ViewType, agentId?: string) {
     <Sidebar 
       @view-change="handleViewChange"
       :selected-agent-id="selectedAgentId"
+      :current-view="currentView"
     />
     
     <main class="main-content">
@@ -44,7 +45,8 @@ function handleViewChange(view: ViewType, agentId?: string) {
 
 .main-content {
   flex: 1;
-  background: #fff;
+  background: transparent;
   overflow: hidden;
+  min-height: 0; /* 允许内部可滚动子元素正确计算高度 */
 }
 </style>

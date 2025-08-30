@@ -10,7 +10,17 @@ const router = createRouter({
       component: HomeView,
       children: [
         { path: 'innovation', name: 'innovation', component: () => import('../views/InnovationTraining.vue') },
-        { path: 'ai-x', name: 'ai-x', component: () => import('../views/AIX.vue') },
+        {
+          path: 'ai-x',
+          name: 'ai-x',
+          component: () => import('../views/AIX.vue'),
+          redirect: { name: 'ai-x-explore' },
+          children: [
+            { path: 'explore', name: 'ai-x-explore', component: () => import('../views/AIX/components/ExploreView.vue') },
+            { path: 'create/:agentId?', name: 'ai-x-create', component: () => import('../views/AIX/components/CreateView.vue'), props: true },
+            { path: 'chat/:agentId?', name: 'ai-x-chat', component: () => import('../views/AIX/components/ChatView.vue'), props: true }
+          ]
+        },
         { path: 'international', name: 'international', component: () => import('../views/InternationalResources.vue') },
         { path: 'personal', name: 'personal', component: () => import('../views/PersonalPath.vue') },
         { path: 'community', name: 'community', component: () => import('../views/OpenCommunity.vue') },
