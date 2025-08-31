@@ -86,10 +86,11 @@ const emit = defineEmits<{
 const props = defineProps<{
   selectedAgentId?: string
   currentView?: 'explore' | 'create' | 'chat'
+  routeName?: string
 }>()
 
 function handleExploreClick() {
-  emit('viewChange', 'explore')
+  emit('viewChange', 'create', 'component')
 }
 
 function handleCreateClick() {
@@ -203,7 +204,7 @@ watch(() => props.selectedAgentId, (val) => {
           </div>
         </div>
         <div class="create-action-row">
-          <button class="create-agent-btn" :class="{ active: props.currentView === 'create' && !selectedAgentId }" @click="handleCreateClick">
+          <button class="create-agent-btn" :class="{ active: props.currentView === 'create' && !selectedAgentId && props.routeName !== 'ai-x-create-component' }" @click="handleCreateClick">
             <span class="plus">+</span>
             <span>创建智能体</span>
           </button>

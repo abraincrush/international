@@ -18,7 +18,8 @@ const router = createRouter({
           children: [
             { path: 'explore', name: 'ai-x-explore', component: () => import('../views/AIX/components/ExploreView.vue') },
             { path: 'create/:agentId?', name: 'ai-x-create', component: () => import('../views/AIX/components/CreateView.vue'), props: true },
-            { path: 'chat/:agentId?', name: 'ai-x-chat', component: () => import('../views/AIX/components/ChatView.vue'), props: true }
+            { path: 'chat/:agentId?', name: 'ai-x-chat', component: () => import('../views/AIX/components/ChatView.vue'), props: true },
+            { path: 'create/component', name: 'ai-x-create-component', component: () => import('../views/AIX/components/ComponentsMarket.vue') }
           ]
         },
         { path: 'international', name: 'international', component: () => import('../views/InternationalResources.vue') },
