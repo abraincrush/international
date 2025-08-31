@@ -22,7 +22,16 @@ const router = createRouter({
             { path: 'create/component', name: 'ai-x-create-component', component: () => import('../views/AIX/components/ComponentsMarket.vue') }
           ]
         },
-        { path: 'international', name: 'international', component: () => import('../views/InternationalResources.vue') },
+        {
+          path: 'international',
+          name: 'international',
+          component: () => import('../views/InternationalResources.vue'),
+          redirect: { name: 'international-courses' },
+          children: [
+            { path: 'courses', name: 'international-courses', component: () => import('../views/International/components/CoursesView.vue') },
+            { path: 'projects', name: 'international-projects', component: () => import('../views/International/components/ProjectsView.vue') }
+          ]
+        },
         { path: 'personal', name: 'personal', component: () => import('../views/PersonalPath.vue') },
         { path: 'community', name: 'community', component: () => import('../views/OpenCommunity.vue') },
         { path: 'atlas', name: 'atlas', component: () => import('../views/Atlas.vue') },
