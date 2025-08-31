@@ -93,6 +93,7 @@ const comments = ref<Comment[]>([
 ])
 
 // 发新话题（表单）
+const showNewTopicForm = ref(false)
 const newTopicTitle = ref('')
 const newTopicContent = ref('')
 const newTopicTags = ref('')
@@ -307,146 +308,97 @@ const addComment = () => {
 
 <template>
 	<!-- 列表页（currentTopic 为空） -->
-	<div v-if="!currentTopic">
-		<section class="section-card section-hero">
-			<h1 class="hero-title">开放交流 Open Exchange</h1>
-			<div class="hero-subtitle-row">
-				<span class="hero-subtitle">自由创设场景</span>
-				<span class="hero-subtitle">展开话题讨论</span>
-				<span class="hero-subtitle">连接全球创新者</span>
-			</div>
-		</section>
-
-		<section class="search-section">
-			<div class="search-container">
-				<div class="search-input-wrapper">
-					<Icon icon="mdi:magnify" class="search-icon" />
-					<input
-						v-model="searchQuery"
-						type="text"
-						class="search-input"
-						placeholder="搜索话题、作者或标签..."
-						@input="showSearchResults = true"
-					/>
-					<button
-						v-if="searchQuery || selectedTags.length > 0"
-						class="clear-search-btn"
-						@click="clearSearch"
-						title="清除搜索"
-					>✕</button>
+	<div v-if="!currentTopic" class="main-content-wrapper">
+		<!-- 页面头部区域 -->
+		<header class="page-header">
+			<section class="section-card section-hero">
+				<h1 class="hero-title">开放交流 Open Exchange</h1>
+				<div class="hero-subtitle-row">
+					<span class="hero-subtitle">自由创设场景</span>
+					<span class="hero-subtitle">展开话题讨论</span>
+					<span class="hero-subtitle">连接全球创新者</span>
 				</div>
+			</section>
+		</header>
 
-				<div class="tags-filter">
-					<div class="tags-filter-header">
-						<span class="tags-filter-label">标签筛选</span>
-						<button class="tags-toggle-btn" @click="showTagsFilter = !showTagsFilter" :class="{ active: showTagsFilter }">
-							{{ showTagsFilter ? '收起' : '展开' }}
-							<Icon :icon="showTagsFilter ? 'mdi:chevron-up' : 'mdi:chevron-down'" width="16" />
-						</button>
-					</div>
-
-					<div v-if="selectedTags.length > 0" class="selected-tags-display">
-						<span class="selected-tags-label">已选标签：</span>
-						<div class="selected-tags-list">
-							<span v-for="tag in selectedTags" :key="tag" class="selected-tag-chip">
-								{{ tag }}
-								<button class="remove-tag-btn" @click="toggleTag(tag)" title="移除标签">×</button>
-							</span>
+		<!-- 功能操作区域 -->
+		<section class="action-section">
+			<!-- 搜索和发布并排布局 -->
+			<div class="search-publish-container">
+				<!-- 左侧搜索栏 -->
+				<div class="search-publish-left">
+					<div class="search-container">
+						<div class="search-input-wrapper">
+							<Icon icon="mdi:magnify" class="search-icon" />
+							<input
+								v-model="searchQuery"
+								type="text"
+								class="search-input"
+								placeholder="搜索话题、作者或标签..."
+								@input="showSearchResults = true"
+							/>
+							<button
+								v-if="searchQuery || selectedTags.length > 0"
+								class="clear-search-btn"
+								@click="clearSearch"
+								title="清除搜索"
+							>✕</button>
 						</div>
-					</div>
 
-					<div v-show="showTagsFilter" class="tags-filter-list">
-						<button
-							v-for="tag in allTags"
-							:key="tag"
-							class="tag-filter-btn"
-							:class="{ active: selectedTags.includes(tag) }"
-							@click="toggleTag(tag)"
-						>{{ tag }}</button>
-					</div>
-				</div>
+						<div class="tags-filter">
+							<div class="tags-filter-header">
+								<span class="tags-filter-label">标签筛选</span>
+								<button class="tags-toggle-btn" @click="showTagsFilter = !showTagsFilter" :class="{ active: showTagsFilter }">
+									{{ showTagsFilter ? '收起' : '展开' }}
+									<Icon :icon="showTagsFilter ? 'mdi:chevron-up' : 'mdi:chevron-down'" width="16" />
+								</button>
+							</div>
 
-				<div v-if="searchQuery || selectedTags.length > 0" class="search-stats">
-					<span class="search-results-count">找到 {{ filteredTopics.length }} 个话题</span>
-					<button class="clear-all-btn" @click="clearSearch">清除所有筛选</button>
-				</div>
-			</div>
-		</section>
+							<div v-if="selectedTags.length > 0" class="selected-tags-display">
+								<span class="selected-tags-label">已选标签：</span>
+								<div class="selected-tags-list">
+									<span v-for="tag in selectedTags" :key="tag" class="selected-tag-chip">
+										{{ tag }}
+										<button class="remove-tag-btn" @click="toggleTag(tag)" title="移除标签">×</button>
+									</span>
+								</div>
+							</div>
 
-		<section class="topics-section">
-			<div class="section-header-row">
-				<span class="section-header-title">{{ searchQuery || selectedTags.length > 0 ? '搜索结果' : '热门话题' }}</span>
-				<span class="section-header-arrow">&gt;</span>
-			</div>
-			<div class="topics-grid">
-				<div
-					v-for="topic in filteredTopics"
-					:key="topic.id"
-					class="topic-card-compact"
-					@click="viewTopicDetail(topic)"
-				>
-					<div class="topic-header-compact">
-						<img :src="topic.avatar" class="topic-avatar-compact" />
-						<div class="topic-meta-compact">
-							<span class="topic-author-compact" v-html="highlightText(topic.author, searchQuery)"></span>
-							<span class="topic-time-compact">{{ topic.time }}</span>
+							<div v-show="showTagsFilter" class="tags-filter-list">
+								<button
+									v-for="tag in allTags"
+									:key="tag"
+									class="tag-filter-btn"
+									:class="{ active: selectedTags.includes(tag) }"
+									@click="toggleTag(tag)"
+								>{{ tag }}</button>
+							</div>
 						</div>
-						<div class="topic-stats-compact">
-							<span class="topic-replies-compact">💬 {{ topic.replies }}</span>
-							<span class="topic-views-compact">👁️ {{ topic.views }}</span>
+
+						<div v-if="searchQuery || selectedTags.length > 0" class="search-stats">
+							<span class="search-results-count">找到 {{ filteredTopics.length }} 个话题</span>
+							<button class="clear-all-btn" @click="clearSearch">清除所有筛选</button>
 						</div>
-					</div>
-					<div class="topic-content-compact">
-						<h3 class="topic-title-compact" v-html="highlightText(topic.title, searchQuery)"></h3>
-						<p class="topic-text-compact" v-html="highlightText(topic.content, searchQuery)"></p>
-						<div class="topic-tags-compact">
-							<span
-								v-for="tag in topic.tags"
-								:key="tag"
-								class="topic-tag-compact"
-								v-html="highlightText(tag, searchQuery)"
-							></span>
-						</div>
-					</div>
-					<div class="topic-actions-compact">
-						<button class="topic-action-btn-compact" @click.stop="viewTopicDetail(topic)">💬 查看详情</button>
-						<button class="topic-action-btn-compact">📤 分享</button>
-						<button class="topic-action-btn-compact">⭐ 收藏</button>
 					</div>
 				</div>
 
-				<div v-if="filteredTopics.length === 0 && (searchQuery || selectedTags.length > 0)" class="no-results">
-					<div class="no-results-content">
-						<Icon icon="mdi:magnify" class="no-results-icon" />
-						<h3 class="no-results-title">未找到相关话题</h3>
-						<p class="no-results-desc">尝试调整搜索关键词或标签筛选条件</p>
-						<button class="no-results-btn" @click="clearSearch">清除搜索条件</button>
-					</div>
+				<!-- 右侧发布新话题按钮 -->
+				<div class="search-publish-right">
+					<button class="new-topic-btn-compact" @click="showNewTopicForm = true">
+						<Icon icon="mdi:plus" width="16" />
+						发布新话题
+					</button>
 				</div>
 			</div>
 		</section>
 
-		<section class="resources-section">
-			<div class="section-header-row">
-				<span class="section-header-title">国际资源</span>
-				<span class="section-header-arrow">&gt;</span>
-			</div>
-			<div class="resources-grid-compact">
-				<div class="resource-card-compact" v-for="resource in internationalResources" :key="resource.name">
-					<div class="resource-icon-compact"><Icon :icon="resource.icon" width="24" /></div>
-					<div class="resource-content-compact">
-						<h3 class="resource-title-compact">{{ resource.name }}</h3>
-						<p class="resource-desc-compact">{{ resource.desc }}</p>
-					</div>
-					<button class="resource-btn-compact">访问</button>
-				</div>
-			</div>
-		</section>
-
-		<section class="new-topic-section">
+		<!-- 发布新话题表单 -->
+		<section v-if="showNewTopicForm" class="new-topic-section">
 			<div class="section-header-row">
 				<span class="section-header-title">发布新话题</span>
-				<span class="section-header-arrow">&gt;</span>
+				<button class="close-form-btn" @click="showNewTopicForm = false">
+					<Icon icon="mdi:close" width="18" />
+				</button>
 			</div>
 			<div class="new-topic-form-compact">
 				<input v-model="newTopicTitle" type="text" class="topic-title-input-compact" placeholder="输入话题标题..." />
@@ -459,7 +411,7 @@ const addComment = () => {
 					</div>
 					<div v-if="selectedSkills.length > 0" class="selected-skills">
 						<span class="selected-skills-label">已选技能：</span>
-						<span v-for="skill in selectedSkills" :key="skill" class="selected-skill-tag">{{ skill }}</span>
+						<span v-for="skill in selectedSkills" :key="skill" class="selected-skill-tag">{{ skill }}"></span>
 					</div>
 				</div>
 
@@ -568,6 +520,76 @@ const addComment = () => {
 				</div>
 			</div>
 		</div>
+
+		<section class="topics-section">
+			<div class="section-header-row">
+				<span class="section-header-title">{{ searchQuery || selectedTags.length > 0 ? '搜索结果' : '热门话题' }}</span>
+				<span class="section-header-arrow">&gt;</span>
+			</div>
+			<div class="topics-grid">
+				<div
+					v-for="topic in filteredTopics"
+					:key="topic.id"
+					class="topic-card-compact"
+					@click="viewTopicDetail(topic)"
+				>
+					<div class="topic-header-compact">
+						<img :src="topic.avatar" class="topic-avatar-compact" />
+						<div class="topic-meta-compact">
+							<span class="topic-author-compact" v-html="highlightText(topic.author, searchQuery)"></span>
+							<span class="topic-time-compact">{{ topic.time }}</span>
+						</div>
+						<div class="topic-stats-compact">
+							<span class="topic-replies-compact">💬 {{ topic.replies }}</span>
+							<span class="topic-views-compact">👁️ {{ topic.views }}</span>
+						</div>
+					</div>
+					<div class="topic-content-compact">
+						<h3 class="topic-title-compact" v-html="highlightText(topic.title, searchQuery)"></h3>
+						<p class="topic-text-compact" v-html="highlightText(topic.content, searchQuery)"></p>
+						<div class="topic-tags-compact">
+							<span
+								v-for="tag in topic.tags"
+								:key="tag"
+								class="topic-tag-compact"
+								v-html="highlightText(tag, searchQuery)"
+							></span>
+						</div>
+					</div>
+					<div class="topic-actions-compact">
+						<button class="topic-action-btn-compact" @click.stop="viewTopicDetail(topic)">💬 查看详情</button>
+						<button class="topic-action-btn-compact">📤 分享</button>
+						<button class="topic-action-btn-compact">⭐ 收藏</button>
+					</div>
+				</div>
+
+				<div v-if="filteredTopics.length === 0 && (searchQuery || selectedTags.length > 0)" class="no-results">
+					<div class="no-results-content">
+						<Icon icon="mdi:magnify" class="no-results-icon" />
+						<h3 class="no-results-title">未找到相关话题</h3>
+						<p class="no-results-desc">尝试调整搜索关键词或标签筛选条件</p>
+						<button class="no-results-btn" @click="clearSearch">清除搜索条件</button>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="resources-section">
+			<div class="section-header-row">
+				<span class="section-header-title">国际资源</span>
+				<span class="section-header-arrow">&gt;</span>
+			</div>
+			<div class="resources-grid-compact">
+				<div class="resource-card-compact" v-for="resource in internationalResources" :key="resource.name">
+					<div class="resource-icon-compact"><Icon :icon="resource.icon" width="24" /></div>
+					<div class="resource-content-compact">
+						<h3 class="resource-title-compact">{{ resource.name }}</h3>
+						<p class="resource-desc-compact">{{ resource.desc }}</p>
+					</div>
+					<button class="resource-btn-compact">访问</button>
+				</div>
+			</div>
+		</section>
 	</div>
 
 	<!-- 详情页（currentTopic 不为空） -->
@@ -766,29 +788,67 @@ const addComment = () => {
 </template>
 
 <style scoped>
+/* 页面整体布局 */
+.main-content-wrapper {
+	width: 100%;
+	max-width: 100%;
+	margin: 0;
+	padding: 0;
+	animation: fadeInUp 0.6s ease-out;
+}
+
+/* 页面头部区域 */
+.page-header {
+	margin-bottom: 8px;
+	text-align: center;
+}
+
+/* 功能操作区域 */
+.action-section {
+	margin-bottom: 12px;
+	background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+	border-radius: 0;
+	padding: 12px 16px;
+	border: none;
+	border-bottom: 1px solid #e8ecff;
+	box-shadow: 0 1px 6px rgba(123, 91, 230, 0.04);
+	width: 100%;
+}
+
+/* 动画效果 */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
 /* 英雄区 */
 .section-card {
 	background: #fff;
-	border-radius: 12px;
-	box-shadow: 0 6px 24px rgba(80,60,180,0.06);
+	border-radius: 10px;
+	box-shadow: 0 4px 16px rgba(80,60,180,0.05);
 	border: 1px solid #eef1ff;
-	margin-bottom: 12px;
-	padding: 14px 10px;
+	margin-bottom: 8px;
+	padding: 12px 8px;
 	max-width: 96%;
 	margin-left: auto;
 	margin-right: auto;
 }
 .section-hero {
-	min-height: 240px;
+	min-height: 200px;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
 	background: linear-gradient(135deg, rgba(237,233,254,0.85) 0%, rgba(245,243,255,0.85) 100%);
-	border-radius: 20px;
-	box-shadow: 0 4px 24px 0 rgba(80, 60, 180, 0.06);
+	border-radius: 16px;
+	box-shadow: 0 3px 16px 0 rgba(80, 60, 180, 0.05);
 	margin-bottom: 0px;
-	padding: 20px 48px 12px 48px;
+	padding: 16px 40px 10px 40px;
 	position: relative;
 	overflow: hidden;
 	max-width: 96%;
@@ -796,10 +856,10 @@ const addComment = () => {
 	margin-right: auto;
 }
 .hero-title {
-	font-size: 3.2em;
+	font-size: 2.8em;
 	font-weight: 900;
 	letter-spacing: 0.02em;
-	margin-bottom: 36px;
+	margin-bottom: 28px;
 	z-index: 1;
 	background: linear-gradient(90deg,#1f2937,#4b3fbf,#7b5be6);
 	-webkit-background-clip: text;
@@ -811,17 +871,17 @@ const addComment = () => {
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 130px;
+	gap: 100px;
 	margin-bottom: 0;
 	z-index: 1;
-	margin-top: 25px;
+	margin-top: 20px;
 }
 .hero-subtitle {
 	background: rgba(255,255,255,0.7);
-	border-radius: 10px;
-	padding: 8px 32px;
-	font-size: 1.08em;
-	box-shadow: 0 1px 4px rgba(80, 60, 180, 0.04);
+	border-radius: 8px;
+	padding: 6px 24px;
+	font-size: 1em;
+	box-shadow: 0 1px 3px rgba(80, 60, 180, 0.04);
 	margin-bottom: 0;
 }
 .section-header-row {
@@ -848,65 +908,122 @@ const addComment = () => {
 	margin-top: 10px;
 }
 
+/* 搜索和发布并排布局 */
+.search-publish-container {
+	display: flex;
+	gap: 12px;
+	margin-bottom: 0;
+	max-width: 100%;
+	width: 100%;
+	align-items: stretch;
+	justify-content: space-between;
+}
+
+.search-publish-left {
+	flex: 1;
+	min-width: 0;
+	margin-right: 8px;
+}
+
+.search-publish-right {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 100px;
+	margin-left: auto;
+}
+
 /* 搜索 */
-.search-section { margin-bottom: 16px; max-width: 96%; margin-left: auto; margin-right: auto; }
-.search-container { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eef1ff; padding: 16px; }
-.search-input-wrapper { position: relative; margin-bottom: 12px; }
-.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #999; font-size: 20px; z-index: 1; }
-.search-input { width: 100%; padding: 10px 16px 10px 44px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 1em; color: #333; background: #f9f9f9; transition: all 0.2s ease; }
-.search-input:focus { border-color: #7b5be6; outline: none; background: #fff; box-shadow: 0 0 0 3px rgba(123,91,230,0.1); }
-.clear-search-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: #f0f0f0; border: none; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #666; font-size: 12px; transition: all 0.2s ease; }
+.search-section { margin-bottom: 12px; max-width: 96%; margin-left: auto; margin-right: auto; }
+.search-container { 
+	background: #fff; 
+	border-radius: 8px; 
+	box-shadow: 0 1px 6px rgba(0,0,0,0.04); 
+	border: 1px solid #eef1ff; 
+	padding: 12px 14px; 
+	transition: all 0.3s ease;
+	width: 100%;
+}
+
+.search-container:hover {
+	box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+	transform: translateY(-1px);
+}
+.search-input-wrapper { position: relative; margin-bottom: 10px; }
+.search-icon { 
+	position: absolute; 
+	left: 8px; 
+	top: 50%; 
+	transform: translateY(-50%); 
+	color: #999; 
+	font-size: 14px; 
+	z-index: 1; 
+}
+.search-input { 
+	width: 100%; 
+	padding: 6px 10px 6px 32px; 
+	border: 1px solid #e0e0e0; 
+	border-radius: 4px; 
+	font-size: 0.85em; 
+	color: #333; 
+	background: #f9f9f9; 
+	transition: all 0.2s ease; 
+	min-height: 32px;
+}
+.search-input:focus { border-color: #7b5be6; outline: none; background: #fff; box-shadow: 0 0 0 2px rgba(123,91,230,0.1); }
+.clear-search-btn { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: #f0f0f0; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #666; font-size: 11px; transition: all 0.2s ease; }
 .clear-search-btn:hover { background: #e0e0e0; color: #333; }
 
-.tags-filter { margin-bottom: 12px; }
-.tags-filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.tags-filter-label { font-weight: 500; color: #666; font-size: 0.9em; }
-.tags-toggle-btn { display: flex; align-items: center; gap: 6px; padding: 5px 10px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.85em; }
+.tags-filter { margin-bottom: 10px; }
+.tags-filter-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tags-filter-label { font-weight: 500; color: #666; font-size: 0.85em; }
+.tags-toggle-btn { display: flex; align-items: center; gap: 4px; padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 5px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.8em; }
 .tags-toggle-btn:hover { background: #e0e0e0; border-color: #ccc; color: #333; }
 .tags-toggle-btn.active { background: #7b5be6; border-color: #7b5be6; color: #fff; }
 
-.selected-tags-display { margin-bottom: 8px; padding: 6px 10px; background: #f8f9ff; border-radius: 6px; border: 1px solid #e0e8ff; }
-.selected-tags-label { display: block; font-size: 0.85em; color: #666; margin-bottom: 6px; }
-.selected-tags-list { display: flex; flex-wrap: wrap; gap: 6px; }
-.selected-tag-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: #7b5be6; color: #fff; border-radius: 16px; font-size: 0.8em; font-weight: 500; }
-.remove-tag-btn { background: none; border: none; color: #fff; cursor: pointer; font-size: 14px; font-weight: bold; padding: 0; width: 16px; height: 16px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s ease; }
+.selected-tags-display { margin-bottom: 6px; padding: 4px 8px; background: #f8f9ff; border-radius: 5px; border: 1px solid #e0e8ff; }
+.selected-tags-label { display: block; font-size: 0.8em; color: #666; margin-bottom: 4px; }
+.selected-tags-list { display: flex; flex-wrap: wrap; gap: 4px; }
+.selected-tag-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #7b5be6; color: #fff; border-radius: 12px; font-size: 0.75em; font-weight: 500; }
+.remove-tag-btn { background: none; border: none; color: #fff; cursor: pointer; font-size: 12px; font-weight: bold; padding: 0; width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s ease; }
 .remove-tag-btn:hover { background: rgba(255, 255, 255, 0.2); }
 
-.tags-filter-list { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px; background: #f8f9ff; border-radius: 8px; border: 1px solid #e0e8ff; }
-.tag-filter-btn { padding: 5px 10px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.85em; }
+.tags-filter-list { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px; background: #f8f9ff; border-radius: 6px; border: 1px solid #e0e8ff; }
+.tag-filter-btn { padding: 4px 8px; border: 1px solid #e0e0e0; border-radius: 5px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.8em; }
 .tag-filter-btn:hover { background: #e0e0e0; border-color: #ccc; }
 .tag-filter-btn.active { background: #7b5be6; border-color: #7b5be6; color: #fff; }
 
-.search-stats { display: flex; justify-content: space-between; align-items: center; padding-top: 12px; border-top: 1px solid #f0f0f0; }
-.search-results-count { color: #666; font-size: 0.9em; }
-.clear-all-btn { padding: 6px 12px; border: 1px solid #e0e0e0; border-radius: 6px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.85em; }
+.search-stats { display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+.search-results-count { color: #666; font-size: 0.85em; }
+.clear-all-btn { padding: 5px 10px; border: 1px solid #e0e0e0; border-radius: 5px; background: #f5f5f5; color: #666; cursor: pointer; transition: all 0.2s ease; font-size: 0.8em; }
 .clear-all-btn:hover { background: #e0e0e0; border-color: #ccc; }
 
 /* 话题卡 */
-.topics-section { margin-bottom: 12px; padding: 0; max-width: 96%; margin-left: auto; margin-right: auto; }
-.topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 10px; }
-.topic-card-compact { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); border: 1px solid #eef1ff; padding: 16px; transition: all 0.2s ease; cursor: pointer; position: relative; }
-.topic-card-compact::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 12px; background: linear-gradient(135deg, rgba(123,91,230,0.02) 0%, rgba(91,141,239,0.02) 100%); opacity: 0; transition: opacity 0.2s ease; }
+.topics-section { margin-bottom: 8px; padding: 0; max-width: 96%; margin-left: auto; margin-right: auto; }
+.topics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 8px; }
+.topic-card-compact { background: #fff; border-radius: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.06); border: 1px solid #eef1ff; padding: 12px; transition: all 0.2s ease; cursor: pointer; position: relative; }
+.topic-card-compact::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; border-radius: 10px; background: linear-gradient(135deg, rgba(123,91,230,0.02) 0%, rgba(91,141,239,0.02) 100%); opacity: 0; transition: opacity 0.2s ease; }
 .topic-card-compact:hover::before { opacity: 1; }
-.topic-card-compact:hover { box-shadow: 0 4px 16px rgba(80,60,180,0.12); transform: translateY(-2px); }
+.topic-card-compact:hover { box-shadow: 0 3px 12px rgba(80,60,180,0.12); transform: translateY(-1px); }
 
-.topic-header-compact { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
-.topic-avatar-compact { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
+.topic-header-compact { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.topic-avatar-compact { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .topic-meta-compact { flex: 1; display: flex; flex-direction: column; gap: 2px; }
-.topic-author-compact { font-weight: 600; color: #333; font-size: 0.9em; }
-.topic-time-compact { font-size: 0.8em; color: #888; }
-.topic-stats-compact { display: flex; gap: 12px; font-size: 0.8em; color: #666; }
+.topic-author-compact { font-weight: 600; color: #333; font-size: 0.85em; }
+.topic-time-compact { font-size: 0.75em; color: #888; }
+.topic-stats-compact { display: flex; gap: 10px; font-size: 0.75em; color: #666; }
 
-.topic-content-compact { margin-bottom: 12px; }
-.topic-title-compact { font-size: 1.1em; font-weight: 600; color: #222; margin-bottom: 8px; line-height: 1.3; }
-.topic-text-compact { color: #666; line-height: 1.4; margin-bottom: 10px; font-size: 0.9em; }
+.topic-content-compact { margin-bottom: 10px; }
+.topic-title-compact { font-size: 1em; font-weight: 600; color: #222; margin-bottom: 6px; line-height: 1.3; }
+.topic-text-compact { color: #666; line-height: 1.4; margin-bottom: 8px; font-size: 0.85em; }
 
-.topic-tags-compact { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-.topic-tag-compact { background: #f0f7ff; border-radius: 6px; padding: 4px 8px; border: 1px solid #e0f0ff; font-size: 0.8em; color: #7b5be6; transition: all 0.2s ease; cursor: pointer; }
+.topic-tags-compact { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+.topic-tag-compact { background: #f0f7ff; border-radius: 5px; padding: 3px 6px; border: 1px solid #e0f0ff; font-size: 0.75em; color: #7b5be6; transition: all 0.2s ease; cursor: pointer; }
 .topic-tag-compact:hover { background: #e0f0ff; border-color: #7b5be6; transform: translateY(-1px); }
 
-.topic-actions-compact { display: flex; gap: 8px; }
-.topic-action-btn-compact { flex: 1; border-radius: 8px; font-size: 0.85em; padding: 6px 12px; border: 1px solid #e0f0ff; color: #7b5be6; background: #f0f7ff; cursor: pointer; transition: all 0.2s ease; }
+.topic-actions-compact { display: flex; gap: 6px; }
+.topic-action-btn-compact { flex: 1; border-radius: 6px; font-size: 0.8em; padding: 5px 10px; border: 1px solid #e0f0ff; color: #7b5be6; background: #f0f7ff; cursor: pointer; transition: all 0.2s ease; }
 .topic-action-btn-compact:hover { background: #e0f0ff; border-color: #7b5be6; transform: translateY(-1px); }
 
 /* 无搜索结果 */
@@ -919,16 +1036,130 @@ const addComment = () => {
 .no-results-btn:hover { background: #6a4fd8; border-color: #6a4fd8; transform: translateY(-1px); }
 
 /* 资源 */
-.resources-section { margin-bottom: 12px; padding: 0; max-width: 96%; margin-left: auto; margin-right: auto; }
-.resources-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 12px; margin-top: 10px; }
-.resource-card-compact { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #f8faff; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); border: 1px solid #eef1ff; transition: all 0.2s ease; cursor: pointer; }
-.resource-card-compact:hover { background: #f0f7ff; box-shadow: 0 4px 16px rgba(123,91,230,0.1); transform: translateY(-2px); border-color: #b5aeea; }
-.resource-icon-compact { font-size: 24px; color: #7b5be6; flex-shrink: 0; }
+.resources-section { margin-bottom: 8px; padding: 0; max-width: 96%; margin-left: auto; margin-right: auto; }
+.resources-grid-compact { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 8px; }
+.resource-card-compact { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: #f8faff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); border: 1px solid #eef1ff; transition: all 0.2s ease; cursor: pointer; }
+.resource-card-compact:hover { background: #f0f7ff; box-shadow: 0 3px 12px rgba(123,91,230,0.1); transform: translateY(-1px); border-color: #b5aeea; }
+.resource-icon-compact { font-size: 20px; color: #7b5be6; flex-shrink: 0; }
 .resource-content-compact { flex: 1; min-width: 0; }
-.resource-title-compact { font-size: 1em; font-weight: 600; color: #222; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.resource-desc-compact { font-size: 0.85em; color: #666; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.resource-btn-compact { border-radius: 8px; font-size: 0.85em; padding: 4px 12px; border: 1px solid #b5aeea; color: #7b5be6; background: rgba(245,243,255,0.8); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
+.resource-title-compact { font-size: 0.95em; font-weight: 600; color: #222; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.resource-desc-compact { font-size: 0.8em; color: #666; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.resource-btn-compact { border-radius: 6px; font-size: 0.8em; padding: 3px 10px; border: 1px solid #b5aeea; color: #7b5be6; background: rgba(245,243,255,0.8); cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
 .resource-btn-compact:hover { background: #ede9fe; transform: translateY(-1px); }
+
+/* 发布新话题按钮 */
+.new-topic-button-section { 
+	margin-bottom: 20px; 
+	padding: 16px 0; 
+	max-width: 100%; 
+	text-align: center; 
+	background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+	border-radius: 16px;
+	border: 1px solid #e8ecff;
+}
+
+/* 紧凑版发布按钮 */
+.new-topic-btn-compact {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	border: none;
+	border-radius: 5px;
+	padding: 6px 12px;
+	font-size: 11px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	box-shadow: 0 1px 6px rgba(102, 126, 234, 0.15);
+	white-space: nowrap;
+	min-width: 90px;
+	justify-content: center;
+}
+
+.new-topic-btn-compact:hover {
+	background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 3px 12px rgba(102, 126, 234, 0.25);
+}
+
+.new-topic-btn-compact:active {
+	transform: translateY(0);
+	box-shadow: 0 1px 6px rgba(102, 126, 234, 0.15);
+}
+
+.new-topic-btn {
+	background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+	color: white;
+	border: none;
+	border-radius: 12px;
+	padding: 14px 28px;
+	font-size: 15px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+	display: inline-flex;
+	align-items: center;
+	gap: 10px;
+	box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+	position: relative;
+	overflow: hidden;
+}
+
+.new-topic-btn::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: -100%;
+	width: 100%;
+	height: 100%;
+	background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+	transition: left 0.5s;
+}
+
+.new-topic-btn:hover::before {
+	left: 100%;
+}
+
+.new-topic-btn:hover {
+	background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+	transform: translateY(-1px);
+	box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+}
+
+.new-topic-btn:active {
+	transform: translateY(0);
+	box-shadow: 0 4px 16px rgba(102, 126, 234, 0.25);
+}
+
+.close-form-btn {
+	background: rgba(255, 255, 255, 0.9);
+	border: 1px solid #e1e5e9;
+	font-size: 16px;
+	cursor: pointer;
+	color: #64748b;
+	padding: 8px;
+	border-radius: 50%;
+	transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	backdrop-filter: blur(8px);
+}
+
+.close-form-btn:hover {
+	background: #f1f5f9;
+	color: #334155;
+	border-color: #cbd5e1;
+	transform: scale(1.05);
+}
+
+.close-form-btn:active {
+	transform: scale(0.95);
+}
 
 /* 发帖 */
 .new-topic-section { margin-bottom: 12px; padding: 0; max-width: 96%; margin-left: auto; margin-right: auto; }
@@ -1069,6 +1300,22 @@ const addComment = () => {
 
 /* 响应式（部分） */
 @media (max-width: 768px) {
+	/* 搜索和发布并排布局响应式 */
+	.search-publish-container {
+		flex-direction: column;
+		gap: 12px;
+	}
+	
+	.search-publish-right {
+		padding-top: 0;
+		justify-content: center;
+	}
+	
+	.new-topic-btn-compact {
+		width: 100%;
+		max-width: 200px;
+	}
+	
 	.topics-grid { grid-template-columns: 1fr; gap: 12px; }
 	.resources-grid-compact { grid-template-columns: 1fr; gap: 12px; }
 	.topic-card-compact { padding: 12px; }

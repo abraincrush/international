@@ -108,35 +108,170 @@
     
     <!-- 右侧详细内容区域 -->
     <div class="right-content">
-      <!-- 大头像 -->
-      <div class="large-avatar-container">
-        <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=400&auto=format&fit=crop" alt="大头像" class="large-avatar" />
+      <!-- 顶部个人信息区域 -->
+      <div class="profile-header">
+        <div class="avatar-section">
+          <div class="avatar-wrapper">
+            <img src="https://images.unsplash.com/photo-1543852786-1cf6624b9987?q=80&w=400&auto=format&fit=crop" alt="用户头像" class="large-avatar" />
+            <div class="avatar-edit-overlay">
+              <Icon icon="mdi:camera" width="20" />
+            </div>
+          </div>
+          <div class="user-info-section">
+            <div class="username-section">
+              <h1 class="large-username">Root_User-#0923</h1>
+              <Icon icon="mdi:pencil" width="18" class="edit-icon" @click="handleUsernameEdit" />
+            </div>
+            <div class="user-status">
+              <span class="status-badge">在线</span>
+              <span class="join-date">加入时间: 2024年1月</span>
+            </div>
+            <div class="action-buttons">
+              <button class="preview-btn">
+                <Icon icon="mdi:eye" width="16" />
+                预览主页
+              </button>
+              <button class="share-btn">
+                <Icon icon="mdi:share" width="16" />
+                分享
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 统计信息卡片 -->
+        <div class="stats-section">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <Icon icon="mdi:robot" width="20" />
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">12</div>
+              <div class="stat-label">智能体</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <Icon icon="mdi:star" width="20" />
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">156</div>
+              <div class="stat-label">获赞数</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <Icon icon="mdi:eye" width="20" />
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">2.3k</div>
+              <div class="stat-label">浏览量</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">
+              <Icon icon="mdi:account-group" width="20" />
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">89</div>
+              <div class="stat-label">关注者</div>
+            </div>
+          </div>
+        </div>
       </div>
       
-      <!-- 用户名和编辑 -->
-      <div class="username-edit">
-        <span class="large-username">Root_User-#0923</span>
-        <Icon icon="mdi:pencil" width="16" class="edit-icon" />
+      <!-- 主要内容区域 -->
+      <div class="main-content">
+        <!-- 个人描述 -->
+        <div class="content-card description-card">
+          <div class="card-header">
+            <h3>个人描述</h3>
+            <Icon icon="mdi:pencil" width="16" class="edit-icon" />
+          </div>
+          <div class="card-content">
+            <textarea 
+              class="description-textarea" 
+              placeholder="提供一段个人介绍以使其地人了解您。"
+              v-model="description"
+              maxlength="200"
+            ></textarea>
+            <div class="description-footer">
+              <span class="char-count">{{ description.length }}/200</span>
+              <button class="save-description-btn" @click="handleSaveDescription">
+                <Icon icon="mdi:content-save" width="16" />
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        <!-- 横向信息卡片区域 -->
+        <div class="horizontal-cards-section">
+          <!-- 联系方式 -->
+          <div class="info-card">
+            <div class="card-header">
+              <h4>联系方式</h4>
+              <Icon icon="mdi:pencil" width="16" class="edit-icon" />
+            </div>
+            <div class="card-content">
+              <div class="contact-item">
+                <Icon icon="mdi:email" width="18" class="iconify" />
+                <span>root@example.com</span>
+              </div>
+              <div class="contact-item">
+                <Icon icon="mdi:phone" width="18" class="iconify" />
+                <span>+86 138****8888</span>
+              </div>
+              <div class="contact-item">
+                <Icon icon="mdi:map-marker" width="18" class="iconify" />
+                <span>北京市朝阳区</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 技能标签 -->
+          <div class="info-card">
+            <div class="card-header">
+              <h4>技能标签</h4>
+              <Icon icon="mdi:plus" width="16" class="edit-icon" />
+            </div>
+            <div class="card-content">
+              <div class="skills-container">
+                <span class="skill-tag">AI开发</span>
+                <span class="skill-tag">机器学习</span>
+                <span class="skill-tag">前端开发</span>
+                <span class="skill-tag">数据分析</span>
+                <span class="skill-tag">产品设计</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- 最近活动 -->
+          <div class="info-card">
+            <div class="card-header">
+              <h4>最近活动</h4>
+              <Icon icon="mdi:clock" width="16" class="edit-icon" />
+            </div>
+            <div class="card-content">
+              <div class="activity-item">
+                <Icon icon="mdi:robot" width="16" class="activity-icon" />
+                <span class="activity-title">创建了智能体'AI助手'</span>
+                <span class="activity-time">2小时前</span>
+              </div>
+              <div class="activity-item">
+                <Icon icon="mdi:star" width="16" class="activity-icon" />
+                <span class="activity-title">获得了5个赞</span>
+                <span class="activity-time">昨天</span>
+              </div>
+              <div class="activity-item">
+                <Icon icon="mdi:account-plus" width="16" class="activity-icon" />
+                <span class="activity-title">新增3个关注者</span>
+                <span class="activity-time">3天前</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      
-      <!-- 预览按钮 -->
-      <button class="preview-btn">
-        <Icon icon="mdi:eye" width="16" />
-        预览主页
-      </button>
-      
-      <!-- 描述区域 -->
-      <div class="description-section">
-        <label class="description-label">描述</label>
-        <textarea 
-          class="description-textarea" 
-          placeholder="提供一段个人介绍以使其地人了解您。"
-          v-model="description"
-        ></textarea>
-      </div>
-      
-      <!-- 保存按钮 -->
-      <button class="save-btn">保存</button>
     </div>
   </div>
 </template>
@@ -148,48 +283,61 @@ import { Icon } from '@iconify/vue'
 const description = ref('')
 const showSubscriptionModal = ref(false)
 const showPaymentModal = ref(false)
+
+// 处理用户名编辑
+const handleUsernameEdit = () => {
+  // TODO: 实现用户名编辑功能
+  console.log('编辑用户名')
+}
+
+// 处理保存描述
+const handleSaveDescription = () => {
+  // TODO: 实现保存描述功能
+  console.log('保存描述:', description.value)
+}
 </script>
 
 <style scoped>
 .personal-profile-container {
-  min-height: 100vh;
+  height: 89vh;
   background: linear-gradient(135deg, #f8faff 0%, #f5f7ff 100%);
   display: flex;
   animation: fadeIn 0.3s ease-in-out;
+  overflow: hidden;
 }
 
 /* 左侧导航栏 */
 .left-navbar {
-  width: 280px;
+  width: 260px;
   background: #fff;
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   border-right: 1px solid #eef1ff;
-  min-height: 80vh;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 0 6px 24px rgba(80, 60, 180, 0.06);
+  height: 100vh;
+  border-radius: 0 16px 16px 0;
+  box-shadow: 0 4px 16px rgba(80, 60, 180, 0.06);
 }
 
 .profile-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
-  margin-bottom: 8px;
-  margin-top: 20px;
+  margin-bottom: 6px;
+  margin-top: 16px;
   text-align: left;
 }
 
 .user-card {
   background: #fff;
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   border: 1px solid #eef1ff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
   transition: all 0.2s ease;
 }
 
@@ -199,12 +347,12 @@ const showPaymentModal = ref(false)
 }
 
 .user-avatar {
-  width: 80px;
-  height: 80px;
-  border-radius: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
   object-fit: cover;
-  border: 3px solid #e6e9ff;
-  box-shadow: 0 4px 12px rgba(123, 91, 230, 0.15);
+  border: 2px solid #e6e9ff;
+  box-shadow: 0 3px 8px rgba(123, 91, 230, 0.15);
   transition: all 0.3s ease;
 }
 
@@ -221,17 +369,17 @@ const showPaymentModal = ref(false)
 }
 
 .username {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: #333;
 }
 
 .user-version {
-  font-size: 16px;
+  font-size: 14px;
   color: #7b5be6;
   background: #f5f7ff;
-  padding: 6px 12px;
-  border-radius: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
   display: inline-block;
   width: fit-content;
   border: 1px solid #e6e9ff;
@@ -242,17 +390,17 @@ const showPaymentModal = ref(false)
   background: linear-gradient(135deg, #7b5be6 0%, #5b8def 100%);
   color: #fff;
   border: none;
-  border-radius: 12px;
-  padding: 16px 24px;
-  font-size: 16px;
+  border-radius: 10px;
+  padding: 12px 20px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 12px rgba(123, 91, 230, 0.3);
+  box-shadow: 0 3px 8px rgba(123, 91, 230, 0.3);
 }
 
 .upgrade-btn:hover {
@@ -269,9 +417,9 @@ const showPaymentModal = ref(false)
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
   cursor: pointer;
   transition: all 0.2s ease;
   color: #666;
@@ -292,7 +440,7 @@ const showPaymentModal = ref(false)
 
 .nav-link span {
   flex: 1;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 /* 右侧详细内容区域 */
@@ -300,178 +448,437 @@ const showPaymentModal = ref(false)
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  background: #fff;
-  padding: 30px;
-  min-height: 100vh;
-  padding-top: 100px;
-  box-shadow: 0 6px 24px rgba(80, 60, 180, 0.06);
+  gap: 12px;
+  background: linear-gradient(135deg, #fafbff 0%, #f5f7ff 100%);
+  padding: 16px;
+  height: 100vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(80, 60, 180, 0.08);
   border-radius: 20px 0 0 20px;
 }
 
-.large-avatar-container {
+/* 顶部个人信息区域 */
+.profile-header {
   display: flex;
-  justify-content: flex-start;
-  margin-top: -30px;
-  margin-left: 120px;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8faff 100%);
+  border-radius: 20px;
+  border: 1px solid #e8ecff;
+  box-shadow: 0 6px 24px rgba(123, 91, 230, 0.06);
+  backdrop-filter: blur(8px);
+}
+
+.avatar-section {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding: 6px 0;
+  position: relative;
+}
+
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
 }
 
 .large-avatar {
-  width: 200px;
-  height: 200px;
-  border-radius: 28px;
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
   object-fit: cover;
-  border: 4px solid #e6e9ff;
-  box-shadow: 0 8px 24px rgba(123, 91, 230, 0.2);
-  transition: all 0.3s ease;
+  border: 2px solid #e6e9ff;
+  box-shadow: 0 6px 18px rgba(123, 91, 230, 0.12);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .large-avatar:hover {
   border-color: #7b5be6;
-  box-shadow: 0 12px 32px rgba(123, 91, 230, 0.3);
+  box-shadow: 0 12px 32px rgba(123, 91, 230, 0.2);
   transform: scale(1.03);
 }
 
-.username-edit {
+.avatar-edit-overlay {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(123, 91, 230, 0.95);
+  color: white;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 3px 8px rgba(123, 91, 230, 0.25);
+}
+
+.avatar-edit-overlay:hover {
+  background: rgba(123, 91, 230, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(123, 91, 230, 0.35);
+}
+
+.user-info-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  margin-top: 40px;
-  margin-left: 120px;
+}
+
+.username-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .large-username {
   font-size: 28px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  letter-spacing: -0.3px;
 }
 
 .edit-icon {
   color: #666;
   cursor: pointer;
   transition: color 0.3s ease;
+  padding: 4px;
+  border-radius: 50%;
 }
 
 .edit-icon:hover {
-  color: #333;
+  color: #7b5be6;
+  background: rgba(123, 91, 230, 0.1);
 }
 
-.preview-btn {
+.user-status {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.status-badge {
+  background: linear-gradient(135deg, #d1fae5, #ecfdf5);
+  color: #065f46;
+  padding: 8px 16px;
+  border-radius: 24px;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+  border: none;
+}
+
+.join-date {
+  color: #666;
+  font-size: 14px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.preview-btn, .share-btn {
   background: #f5f7ff;
   color: #7b5be6;
   border: 1px solid #e6e9ff;
-  border-radius: 12px;
-  padding: 12px 24px;
-  font-size: 16px;
+  border-radius: 14px;
+  padding: 8px 14px;
+  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 5px;
   transition: all 0.2s ease;
-  align-self: center;
-  margin-top: -50px;
-  margin-left: 850px;
   font-weight: 500;
+  box-shadow: 0 1px 4px rgba(123, 91, 230, 0.06);
 }
 
-.preview-btn:hover {
+.preview-btn:hover, .share-btn:hover {
   background: #ede9fe;
   border-color: #b5aeea;
   color: #6a4fd8;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(123, 91, 230, 0.2);
+  box-shadow: 0 3px 8px rgba(123, 91, 230, 0.12);
 }
 
-.description-section {
+/* 统计信息卡片 */
+.stats-section {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stat-card {
+  background: #ffffff;
+  padding: 12px;
+  border-radius: 8px;
+  text-align: left;
+  border: 1px solid #f0f0f0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stat-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-icon {
+  background: #7b5be6;
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.stat-number {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #666;
+  font-weight: 500;
+  line-height: 1;
+}
+
+/* 主要内容区域 */
+.main-content {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  margin-top: 40px;
-  align-items: center;
-  background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
-  padding: 28px;
-  border-radius: 20px;
-  border: 2px solid #e6e9ff;
-  box-shadow: 0 6px 20px rgba(123, 91, 230, 0.12);
 }
 
-.description-label {
-  align-self: flex-start;
-  width: 80%;
+.content-card {
+  background: linear-gradient(135deg, #ffffff 0%, #fafbff 100%);
+  border-radius: 16px;
+  border: 1px solid #e8ecff;
+  box-shadow: 0 3px 16px rgba(123, 91, 230, 0.05);
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.description-label {
-  font-size: 18px;
-  font-weight: 700;
-  color: #5a4fd8;
-  margin-bottom: 16px;
-  margin-left: 12%;
+.content-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(123, 91, 230, 0.1);
+  border-color: #d1d5f7;
+}
+
+.card-header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-shadow: 0 1px 2px rgba(123, 91, 230, 0.1);
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f4ff 100%);
+  border-bottom: 1px solid #e8ecff;
 }
 
-.description-label::before {
-  content: '';
-  width: 6px;
-  height: 20px;
-  background: linear-gradient(135deg, #7b5be6, #5b8def);
-  border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(123, 91, 230, 0.3);
+.card-header h3, .card-header h4 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-content {
+  padding: 20px;
+}
+
+/* 个人描述卡片 */
+.description-card .card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .description-textarea {
-  width: 80%;
-  min-height: 150px;
-  padding: 24px;
-  border: 2px solid #d1b3e7;
-  border-radius: 16px;
-  font-size: 16px;
-  line-height: 1.6;
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  border: 2px solid #e8ecff;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.5;
   resize: vertical;
   font-family: inherit;
-  background: #f8f9ff;
+  background: #fafbff;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px rgba(123, 91, 230, 0.08);
   color: #333;
 }
 
 .description-textarea:focus {
   outline: none;
   border-color: #7b5be6;
-  box-shadow: 0 0 0 4px rgba(123, 91, 230, 0.15), 0 4px 16px rgba(80, 60, 180, 0.1);
-  background: #fff;
-  transform: translateY(-1px);
+  background: white;
+  box-shadow: 0 0 0 3px rgba(123, 91, 230, 0.1);
 }
 
 .description-textarea::placeholder {
   color: #9ca3af;
   font-style: italic;
-  font-size: 15px;
 }
 
-.save-btn {
+.description-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.char-count {
+  color: #666;
+  font-size: 14px;
+}
+
+.save-description-btn {
   background: linear-gradient(135deg, #7b5be6 0%, #5b8def 100%);
   color: white;
   border: none;
-  border-radius: 12px;
-  padding: 16px 32px;
-  font-size: 16px;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
-  align-self: flex-end;
-  margin-top: 100px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.3s ease;
+}
+
+.save-description-btn:hover {
+  transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(123, 91, 230, 0.3);
 }
 
-.save-btn:hover {
-  background: linear-gradient(135deg, #6a4fd8 0%, #4a7cde 100%);
+/* 横向信息卡片区域 */
+.horizontal-cards-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.info-card {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e8ecff;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(123, 91, 230, 0.4);
+  box-shadow: 0 4px 16px rgba(123, 91, 230, 0.08);
+}
+
+.info-card .card-header {
+  padding: 12px 16px;
+}
+
+.info-card .card-header h4 {
+  font-size: 15px;
+}
+
+.info-card .card-content {
+  padding: 16px;
+}
+
+/* 联系方式 */
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.contact-item:last-child {
+  border-bottom: none;
+}
+
+.contact-item .iconify {
+  color: #7b5be6;
+  flex-shrink: 0;
+}
+
+/* 技能标签 */
+.skills-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.skill-tag {
+  background: linear-gradient(135deg, #7b5be6, #5b8def);
+  color: white;
+  padding: 5px 10px;
+  border-radius: 16px;
+  font-size: 11px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.skill-tag:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(123, 91, 230, 0.25);
+}
+
+/* 最近活动 */
+.activity-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.activity-item:last-child {
+  border-bottom: none;
+}
+
+.activity-icon {
+  color: #7b5be6;
+  flex-shrink: 0;
+}
+
+.activity-title {
+  flex: 1;
+  color: #333;
+  font-size: 13px;
+}
+
+.activity-time {
+  color: #666;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 /* 订阅弹窗样式 */
@@ -492,26 +899,26 @@ const showPaymentModal = ref(false)
 
 .subscription-modal {
   background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 800px;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 700px;
   width: 90%;
-  max-height: 150vh;
+  max-height: 80vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 .modal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
   border-bottom: 1px solid #e9ecef;
 }
 
 .modal-header h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0;
@@ -537,17 +944,17 @@ const showPaymentModal = ref(false)
 
 .modal-content {
   display: flex;
-  gap: 30px;
+  gap: 20px;
 }
 
 .plan-card {
   flex: 1;
   background: white;
-  border-radius: 20px;
-  padding: 40px;
+  border-radius: 16px;
+  padding: 25px;
   border: 2px solid #e9ecef;
   transition: all 0.3s ease;
-  min-height: 500px;
+  min-height: 350px;
 }
 
 .plan-card.featured {
@@ -556,20 +963,20 @@ const showPaymentModal = ref(false)
 }
 
 .plan-card h4 {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   color: #333;
-  margin: 0 0 16px 0;
+  margin: 0 0 12px 0;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .plan-price {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 700;
   color: #667eea;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .plan-price .unit {
@@ -587,16 +994,16 @@ const showPaymentModal = ref(false)
 .plan-features {
   list-style: none;
   padding: 0;
-  margin: 0 0 24px 0;
+  margin: 0 0 20px 0;
 }
 
 .plan-features li {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 8px;
   color: #666;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .plan-features li .iconify {
@@ -608,13 +1015,13 @@ const showPaymentModal = ref(false)
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border: none;
-  border-radius: 16px;
-  padding: 16px 24px;
-  font-size: 16px;
+  border-radius: 12px;
+  padding: 12px 20px;
+  font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 100px;
+  margin-top: 60px;
 }
 
 .subscribe-btn:hover {
@@ -640,24 +1047,24 @@ const showPaymentModal = ref(false)
 
 .payment-modal {
   background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-  border-radius: 24px;
-  padding: 40px;
-  max-width: 500px;
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 450px;
   width: 90%;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
 }
 
 .payment-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 30px;
-  padding-bottom: 20px;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
   border-bottom: 1px solid #e9ecef;
 }
 
 .payment-header h3 {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 600;
   color: #333;
   margin: 0;
@@ -670,10 +1077,10 @@ const showPaymentModal = ref(false)
 }
 
 .payment-price {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 700;
   color: #667eea;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .payment-price .unit {
@@ -682,7 +1089,7 @@ const showPaymentModal = ref(false)
 }
 
 .qr-code-container {
-  margin: 30px 0;
+  margin: 20px 0;
 }
 
 .qr-code-placeholder {
@@ -707,9 +1114,9 @@ const showPaymentModal = ref(false)
 }
 
 .payment-instruction {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin: 20px 0;
+  margin: 15px 0;
 }
 
 .plan-price .unit {
@@ -718,9 +1125,9 @@ const showPaymentModal = ref(false)
 }
 
 .payment-terms {
-  font-size: 14px;
+  font-size: 12px;
   color: #999;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .terms-link {
@@ -747,17 +1154,26 @@ const showPaymentModal = ref(false)
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .content-body {
-    flex-direction: column;
-    gap: 24px;
-  }
-  
-  .left-panel {
-    width: 100%;
-  }
-  
   .personal-profile-container {
-    padding: 10px;
+    flex-direction: column;
+    height: auto;
+    overflow: auto;
+  }
+  
+  .left-navbar {
+    width: 100%;
+    height: auto;
+    border-radius: 0 0 16px 16px;
+  }
+  
+  .right-content {
+    height: auto;
+    border-radius: 16px 0 0 0;
+  }
+  
+  .preview-btn {
+    margin-left: 0;
+    align-self: center;
   }
 }
 </style>
